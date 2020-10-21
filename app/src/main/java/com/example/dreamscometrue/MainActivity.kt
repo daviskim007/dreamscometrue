@@ -26,7 +26,7 @@ import java.io.File
 import java.lang.Exception
 
 private const val REQUEST_READ_EXTERNAL_STORAGE = 1000
-private val REQUEST_IMAGE_CAPTURE = 1
+private val REQUEST_IMAGE_CAPTURE = 2
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,72 +59,10 @@ class MainActivity : AppCompatActivity() {
             gallery_button.setOnClickListener { selectGallery() }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     private fun selectGallery() {
-        val intent :Intent = Intent(Intent.ACTION_GET_CONTENT)
+        val intent :Intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
     }
@@ -133,18 +71,11 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == Activity.RESULT_OK)    {
-            if(requestCode == REQUEST_IMAGE_CAPTURE)    {
-
-                val currentImageUrl: Uri? = data?.data
-                if (Build.VERSION.SDK_INT <28){
-                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver,currentImageUrl)
-                    output_image.setImageBitmap(bitmap)
-                } else  {
-                    val decode = ImageDecoder.createSource(contentResolver, currentImageUrl!!)
-                    val bitmap = ImageDecoder.decodeBitmap(decode)
-                    output_image.setImageBitmap(bitmap)
-                     }
+        when(requestCode){
+            2 -> {
+                if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE){
+                    output_image.setImageURI(data?.data) // handle chosen image
+                }
             }
         }
     }
